@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react";
 import { usePlayer } from "@/hooks/usePlayer";
 import { useSettingsStore } from "@/store/useSettingsStore";
+import { replaceDanmakuLoader } from "@/lib/artplayerDanmaku";
 import { createDanmakuLoaderDirect } from "@/lib/danmakuApi";
 
 export function VideoPlayer({
@@ -27,11 +28,13 @@ export function VideoPlayer({
       const hasEnabledDanmaku = danmakuSources.some((s) => s.enabled);
 
       if (hasEnabledDanmaku) {
-        artPlayerRef.current.plugins.artplayerPluginDanmuku.config({
-          danmuku: createDanmakuLoaderDirect(danmakuSources, episodeId),
-        });
-        artPlayerRef.current.plugins.artplayerPluginDanmuku.load();
-        artPlayerRef.current.plugins.artplayerPluginDanmuku.show();
+        const danmakuPlugin =
+          artPlayerRef.current.plugins.artplayerPluginDanmuku;
+        void replaceDanmakuLoader(
+          danmakuPlugin,
+          createDanmakuLoaderDirect(danmakuSources, episodeId),
+        );
+        danmakuPlugin.show();
         artPlayerRef.current.notice.show = "弹幕已切换";
         console.log("手动弹幕加载已触发, episodeId:", episodeId);
       } else {

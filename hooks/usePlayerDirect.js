@@ -5,6 +5,7 @@ import artplayerPluginDanmuku from "artplayer-plugin-danmuku";
 import { useSettingsStore } from "@/store/useSettingsStore";
 import { usePlayHistoryStore } from "@/store/usePlayHistoryStore";
 import { CustomHlsJsLoader } from "@/lib/util";
+import { replaceDanmakuLoader } from "@/lib/artplayerDanmaku";
 import { createDanmakuLoaderDirect } from "@/lib/danmakuApi";
 
 // 从 URL 检测视频格式
@@ -104,10 +105,10 @@ export function usePlayerDirect({
     const hasEnabledDanmaku = danmakuSources.some((s) => s.enabled);
 
     if (hasEnabledDanmaku) {
-      artPlayerRef.current.plugins.artplayerPluginDanmuku.config({
-        danmuku: createDanmakuLoaderDirect(danmakuSources, searchEpisodeId),
-      });
-      artPlayerRef.current.plugins.artplayerPluginDanmuku.load();
+      void replaceDanmakuLoader(
+        artPlayerRef.current.plugins.artplayerPluginDanmuku,
+        createDanmakuLoaderDirect(danmakuSources, searchEpisodeId),
+      );
       console.log("弹幕加载已触发, episodeId:", searchEpisodeId);
     }
   }, [searchEpisodeId]);

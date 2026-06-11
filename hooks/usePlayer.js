@@ -5,6 +5,7 @@ import artplayerPluginDanmuku from "artplayer-plugin-danmuku";
 import { useSettingsStore } from "@/store/useSettingsStore";
 import { usePlayHistoryStore } from "@/store/usePlayHistoryStore";
 import { formatTime, CustomHlsJsLoader } from "@/lib/util";
+import { replaceDanmakuLoader } from "@/lib/artplayerDanmaku";
 import { createDanmakuLoader } from "@/lib/danmakuApi";
 export function usePlayer({
   videoDetail,
@@ -73,16 +74,16 @@ export function usePlayer({
 
     if (hasEnabledDanmaku) {
       const isMovie = videoDetail.episodes?.length === 1;
-      artPlayerRef.current.plugins.artplayerPluginDanmuku.config({
-        danmuku: createDanmakuLoader(
+      void replaceDanmakuLoader(
+        artPlayerRef.current.plugins.artplayerPluginDanmuku,
+        createDanmakuLoader(
           danmakuSources,
           videoDetail.douban_id,
           currentTitle,
           currentEpisodeIndex,
           isMovie,
         ),
-      });
-      artPlayerRef.current.plugins.artplayerPluginDanmuku.load();
+      );
       console.log("弹幕加载已触发");
     }
   };
@@ -123,16 +124,16 @@ export function usePlayer({
     const hasEnabledDanmaku = danmakuSources.some((s) => s.enabled);
     if (hasEnabledDanmaku) {
       const isMovie = videoDetail.episodes?.length === 1;
-      artPlayerRef.current.plugins.artplayerPluginDanmuku.config({
-        danmuku: createDanmakuLoader(
+      void replaceDanmakuLoader(
+        artPlayerRef.current.plugins.artplayerPluginDanmuku,
+        createDanmakuLoader(
           danmakuSources,
           videoDetail.douban_id,
           currentTitle,
           currentEpisodeIndex,
           isMovie,
         ),
-      });
-      artPlayerRef.current.plugins.artplayerPluginDanmuku.load();
+      );
       console.log("弹幕加载已触发");
     } else {
       console.log("没有启用的弹幕源，跳过加载弹幕");
